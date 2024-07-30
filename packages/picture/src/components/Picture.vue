@@ -138,7 +138,10 @@ function handleLoad(ev: Event) {
   loaded.value = true;
 }
 
-defineOptions({ inheritAttrs: false })
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
 </script>
 
 <template>
