@@ -138,10 +138,7 @@ function handleLoad(ev: Event) {
   loaded.value = true;
 }
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
+defineExpose({ inheritAttrs: false })
 </script>
 
 <template>
