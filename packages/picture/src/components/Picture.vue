@@ -14,11 +14,10 @@ const props = withDefaults(defineProps<PictureProp>(), {
 const emit = defineEmits<{ (event: 'load', ev: Event): void }>();
 defineOptions({ inheritAttrs: false });
 
-const ua = navigator.userAgent.toLowerCase();
-// safari浏览器，和端内的safari浏览器有bug，会同时加载最佳兼容和兜底图
-const isSafari =
-  !!ua &&
-  (ua.includes('safari') || (ua.includes('iphone') && ua.includes('kwai')));
+// ios设备上，会同时加载最佳兼容和兜底图
+const isSafari = /iphone|ipad|ipod/i.test(
+  navigator?.userAgent.toLowerCase() || '',
+);
 
 /** 插件会生成多种格式的图片，放入source中，picture标签会选择最优图像显示 */
 const sources = computed<{ srcset?: string; type?: string }[]>(() =>
@@ -41,7 +40,9 @@ const lastSource = computed(() =>
 // 测试过url变化时加载的图片符合预期
 const safariSrc = ref('');
 onMounted(() => {
-  watch(lastSource, (value) => (safariSrc.value = value.src));
+  watch(lastSource, (value) => (safariSrc.value = value.src), {
+    immediate: true,
+  });
 });
 
 const loaded = ref(false);
