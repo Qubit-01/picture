@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import type { PictureProp } from './Picture.vue.d.ts';
+import { assertNotNil, getBrowserName } from '.';
 
 const bgColors = ['#A7D2CB', '#874C62', '#C98474', '#F2D388'];
 const lightenColors = ['#dcedea', '#d4b2bf', '#e9cec7', '#faedcf'];
@@ -46,40 +47,6 @@ function handleLoad(ev: Event) {
   emit('load', ev);
   loaded.value = true;
 }
-
-/**
- * 获取浏览器名称
- * @see https://codepedia.info/detect-browser-in-javascript
- * @returns 浏览器名称
- */
-function getBrowserName() {
-  if (typeof navigator === 'undefined') {
-    return 'other';
-  }
-  const agent = navigator.userAgent.toLowerCase();
-  switch (
-    true // case agent.indexOf("edge") > -1: return "MS Edge";
-  ) {
-    // case agent.indexOf("edg/") > -1: return "Edge ( chromium based)";
-    // case agent.indexOf("opr") > -1 && !!window.opr: return "Opera";
-    // case agent.indexOf("chrome") > -1 && !!window.chrome!: return "Chrome";
-    case agent.includes('chrome'):
-      return 'Chrome';
-    // case agent.indexOf("trident") > -1: return "MS IE";
-    case agent.includes('firefox'):
-      return 'Mozilla Firefox';
-    case agent.includes('safari'):
-      return 'Safari';
-    default:
-      return 'other';
-  }
-}
-
-function assertNotNil<T>(v: T, message?: string): asserts v is NonNullable<T> {
-  if (v == null) {
-    throw new Error(message ?? 'Must not be null or undefined');
-  }
-}
 </script>
 
 <template>
@@ -101,7 +68,6 @@ picture {
 
   img {
     width: 100%;
-    // vertical-align: top;
   }
 
   .placeholder-player {

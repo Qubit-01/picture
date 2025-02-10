@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && mkdir dist && cp ./src/components/Picture.* dist",
+    "build": "rm -rf dist && mkdir dist && cp ./src/components/* dist",
     "type-check": "vue-tsc --noEmit",
     "preview": "vite preview",
     "build:example": "vite build -c vite-example.config.ts",
