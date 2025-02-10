@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import type { PictureProp } from './Picture.vue.d.ts';
-import { assertNotNil, getBrowserName } from '.';
 
 const bgColors = ['#A7D2CB', '#874C62', '#C98474', '#F2D388'];
 const lightenColors = ['#dcedea', '#d4b2bf', '#e9cec7', '#faedcf'];
@@ -14,6 +13,12 @@ const props = withDefaults(defineProps<PictureProp>(), {
 });
 const emit = defineEmits<{ (event: 'load', ev: Event): void }>();
 defineOptions({ inheritAttrs: false });
+
+const ua = navigator.userAgent.toLowerCase();
+// safari浏览器，和端内的safari浏览器有bug，会同时加载最佳兼容和兜底图
+const isSafari =
+  !!ua &&
+  (ua.includes('safari') || (ua.includes('iphone') && ua.includes('kwai')));
 
 /** 插件会生成多种格式的图片，放入source中，picture标签会选择最优图像显示 */
 const sources = computed<{ srcset?: string; type?: string }[]>(() =>
@@ -29,17 +34,14 @@ const sources = computed<{ srcset?: string; type?: string }[]>(() =>
 );
 
 /** 返回图片对象里面主要图片，放入img中，作为兜底图像 */
-const lastSource = computed(() => {
-  const res = 'fallback' in props.src ? props.src.fallback : props.src.img;
-  assertNotNil(res);
-  return res;
-});
+const lastSource = computed(() =>
+  'fallback' in props.src ? props.src.fallback : props.src.img,
+);
 
-const safariSrc = ref();
-const isSafari = getBrowserName() === 'Safari';
 // 测试过url变化时加载的图片符合预期
+const safariSrc = ref('');
 onMounted(() => {
-  safariSrc.value = lastSource.value.src;
+  watch(lastSource, (value) => (safariSrc.value = value.src));
 });
 
 const loaded = ref(false);
